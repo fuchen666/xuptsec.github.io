@@ -782,7 +782,7 @@ blockquote {
 .menu {
   box-sizing: border-box;
   position: absolute;
-  top: 240px;
+  top: 390px;
   width: 240px;
   margin: 0;
   text-align: right;
@@ -792,7 +792,7 @@ blockquote {
   padding-top: 2em;
 }
 .avatar {
-  height: 180px;
+  height: 300px;
   background-color: #333;
   position: absolute;
   width: 100%;
@@ -802,7 +802,7 @@ blockquote {
   display: block;
   width: 130px;
   height: 130px;
-  margin-top: 115px;
+  margin-top: 235px;
   margin-left: auto;
   margin-right: auto;
   border-radius: 50%;
@@ -843,7 +843,7 @@ blockquote {
   }
   .menu {
     position: relative;
-    top: 185px;
+    top: 265px;
     text-align: center;
     width: 100%;
   }
@@ -868,10 +868,10 @@ blockquote {
     right: 1.5em;
   }
   .avatar {
-    height: 120px;
+    height: 200px;
   }
   .avatar > .av-pic {
-    margin-top: 55px;
+    margin-top: 135px;
   }
 }
 .ListView {

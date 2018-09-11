@@ -57,7 +57,7 @@
     </header>
 
     <section>
-      <h1 id="Discuz任意文件删除漏洞复现"><a href="#Discuz任意文件删除漏洞复现" class="headerlink" title="Discuz任意文件删除漏洞复现"></a>Discuz任意文件删除漏洞复现</h1><h2 id="0x00-概述"><a href="#0x00-概述" class="headerlink" title="0x00 概述"></a><strong>0x00 概述</strong></h2><p><strong>Discuz!X**</strong>社区软件，是一个采用<strong> </strong>PHP<strong> </strong>和<strong> </strong>MySQL<strong> </strong>等其他多种数据库构建的性能优异、功能全面、安全稳定的社区论坛平台。但是任何代码都会因为不可避免的原因而存在着安全问题。这次的任意文件删除一是因为后台变量没有对前端传回的数据做校验，理论上下拉框只能传回框中的数据（选择框同理），传来什么就是什么。如果不是，那么肯定是被人改过，直接扔掉这个包并记录<strong><strong>IP</strong></strong>；二是因为<strong><strong>Discuz</strong></strong>的功能很全，有删除文件的功能，但是权限管理的不好。删除文件这种敏感的操作应该做一些限制。这里恰好删除文件的代码里面包含着可以被修改的数据，于是漏洞就产生了。**</p>
+      <h1 id="Discuz任意文件删除漏洞复现"><a href="#Discuz任意文件删除漏洞复现" class="headerlink" title="Discuz任意文件删除漏洞复现"></a>Discuz任意文件删除漏洞复现</h1><h2 id="0x00-概述"><a href="#0x00-概述" class="headerlink" title="0x00 概述"></a><strong>0x00 概述</strong></h2><p><strong>Discuz!X社区软件，是一个采用PHP和MySQL等其他多种数据库构建的性能优异、功能全面、安全稳定的社区论坛平台。但是任何代码都会因为不可避免的原因而存在着安全问题。<a id="more"></a>这次的任意文件删除一是因为后台变量没有对前端传回的数据做校验，理论上下拉框只能传回框中的数据（选择框同理），传来什么就是什么。如果不是，那么肯定是被人改过，直接扔掉这个包并记录IP；二是因为Discuz的功能很全，有删除文件的功能，但是权限管理的不好。删除文件这种敏感的操作应该做一些限制。这里恰好删除文件的代码里面包含着可以被修改的数据，于是漏洞就产生了。</strong></p>
 <h2 id="0x01-漏洞复现"><a href="#0x01-漏洞复现" class="headerlink" title="0x01 漏洞复现"></a><strong>0x01 漏洞复现</strong></h2><p><strong>环境：win10+phpstudy（php5.6）+discuz3.2（2.8-3.3都可以）</strong></p>
 <p><strong>0x00、创建一个测试文件text.txt到网站根目录下</strong></p>
 <p><strong>0x01、找到formhash的值</strong></p>

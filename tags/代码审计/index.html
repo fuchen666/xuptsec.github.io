@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>XUPTSEC&#39;s blog</title>
+  
+    <link rel="icon" href="/assets/favicon.png">
+  
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/favicon.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>XUPTSEC&#39;s blog</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/xuptsec-admin">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <ul class="Index">
+  
+    <header class='PageTitle'>
+        <h1>{ 代码审计 }</h1>
+    </header>
+  
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2018/09/11/phpstorm在phpstudy环境下的debug/">phpstorm在phpstudy环境下的debug</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2018-09-11T11:35:45.000Z" itemprop="datePublished">
+    2018-09-11
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/代码审计/">代码审计</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/php/">php</a> }
+  </li>
+
+
+  </ul>
+  
+  
+</div>
+
+    </header>
+    <div>
+      
+        <h1 id="phpstorm在phpstudy环境下的debug"><a href="#phpstorm在phpstudy环境下的debug" class="headerlink" title="phpstorm在phpstudy环境下的debug"></a>phpstorm在phpstudy环境下的debug</h1><h3 id="环境说明"><a href="#环境说明" class="headerlink" title="-环境说明"></a>-环境说明</h3><p>phpstudy的环境为apache+php</p>
+<p>php版本：5.3.29</p>
+<h3 id="配置xdebug"><a href="#配置xdebug" class="headerlink" title="-配置xdebug"></a>-配置xdebug</h3><p>因为phpstudy已经集成了xdebug扩展，所以我们只需要打开扩展并对php.ini文件进行修改即可。</p>
+<ul>
+<li><p>打开xdebug扩展，在phpstudy主页选择其他选项菜单</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/1.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/1.png" alt="1"></a></p>
+</li>
+<li><p>修改php.ini配置</p>
+<p>打开php5.3版本下的php.ini文件，并添加如下信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xdebug.collect_params=1</span><br><span class="line">xdebug.collect_return=1</span><br><span class="line">xdebug.remote_enable = 1</span><br><span class="line">xdebug.remote_handler = &quot;dbgp&quot;</span><br><span class="line">xdebug.idekey = PHPSTORM</span><br><span class="line">xdebug.remote_host = &quot;127.0.0.1&quot;</span><br><span class="line">xdebug.remote_port = 9000</span><br></pre></td></tr></table></figure>
+<p>此时我们在php5.3所在版本的文件夹下输入php -m命令，会发现在Zend Modules下多了Xdebug</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/2.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/2.png" alt="2"></a></p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/3.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/3.png" alt="3"></a></p>
+</li>
+<li><p>此时查看phpinfo信息会发现有了xdebug配置</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/4.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/4.png" alt="4"></a></p>
+</li>
+</ul>
+<h3 id="配置Xdebug-helper"><a href="#配置Xdebug-helper" class="headerlink" title="-配置Xdebug helper"></a>-配置Xdebug helper</h3><p>打开xdebug helper后，将IDE key设为phpstorm，并将localhost和127.0.0.1添加在Domain filter中</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/5.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/5.png" alt="5"></a></p>
+<h3 id="配置phpstorm"><a href="#配置phpstorm" class="headerlink" title="-配置phpstorm"></a>-配置phpstorm</h3><ul>
+<li><p>首先进入file–&gt;settings配置php环境，这里的php版本尽量与phpstudy中的php版本相同，配置如下</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/6.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/6.png" alt="6"></a></p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/7.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/7.png" alt="7"></a></p>
+</li>
+<li><p>配置Debug，注意Debug port要和前面设置的php.ini中的端口相同</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/8.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/8.png" alt="8"></a></p>
+</li>
+<li><p>配置DBGp Proxy</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/9.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/9.png" alt="9"></a></p>
+</li>
+<li><p>配置Servers，name的名称可以随便起，Debugger选择Xdebug</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/10.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/10.png" alt="img"></a></p>
+</li>
+</ul>
+<h3 id="调试"><a href="#调试" class="headerlink" title="-调试"></a>-调试</h3><ul>
+<li><p>在phpstorm中打开监听连接</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/11.jpg" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/11.jpg" alt="img"></a></p>
+</li>
+<li><p>断点打好之后，在浏览器中开启xdebug</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/12.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/12.png" alt="img"></a></p>
+</li>
+<li><p>phpstorm中将会输出信息</p>
+<p><a href="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/13.png" target="_blank" rel="noopener"><img src="https://elssm.github.io/2018/05/28/phpstorm%E5%9C%A8phpstudy%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84debug/13.png" alt="img"></a></p>
+</li>
+</ul>
+
+      
+    </div>
+</article>
+
+    </li>
+  
+</ul>
+
+
+
+            <footer>
+    <div>© 2018 - XUPTSEC </div>
+    <div>
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a>
+        </span>
+        ,
+        <span>
+            Theme - <a href="https://github.com/nameoverflow/hexo-theme-icalm">Icalm</a>
+        </span>
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>密码找回逻辑漏洞总结 | XUPTSEC&#39;s blog</title>
+  
+    <link rel="icon" href="/assets/favicon.png">
+  
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/favicon.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>XUPTSEC&#39;s blog</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/xuptsec-admin">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>密码找回逻辑漏洞总结</h1>
+    </header>
+
+    <section>
+      <h1 id="密码找回逻辑漏洞总结"><a href="#密码找回逻辑漏洞总结" class="headerlink" title="密码找回逻辑漏洞总结"></a>密码找回逻辑漏洞总结</h1><h2 id="密码找回逻辑测试一般流程"><a href="#密码找回逻辑测试一般流程" class="headerlink" title="密码找回逻辑测试一般流程"></a>密码找回逻辑测试一般流程</h2><ul>
+<li>首先尝试正常密码找回流程，选择不同找回方式，记录所有数据包</li>
+<li>分析数据包，找到敏感部分</li>
+<li>分析后台找回机制所采用的验证手段</li>
+<li>修改数据包验证推测</li>
+</ul>
+<p>这是最近整理的一些东西：</p>
+<p>验证码不失效：可以爆破，现在几乎没有了</p>
+<ul>
+<li><a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2016-0216112" target="_blank" rel="noopener">wooyun-2016-0216112</a></li>
+<li><a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2012-011833" target="_blank" rel="noopener">wooyun-2012-011833</a></li>
+<li><a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2013-046062" target="_blank" rel="noopener">wooyun-2013-046062</a></li>
+<li><a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2013-046999" target="_blank" rel="noopener">wooyun-2013-046999</a></li>
+<li>最关键的还是要限制输入次数，错1次就刷新验证码</li>
+</ul>
+<p>验证码直接返回：点击获取验证码之后，返回包里直接有验证码或者（短信）验证码的 md5值（很少了）</p>
+<ul>
+<li><a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2016-0225471" target="_blank" rel="noopener">wooyun-2016-0225471</a></li>
+<li><a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2012-05630" target="_blank" rel="noopener">wooyun-2012-05630</a></li>
+<li><a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2014-085124" target="_blank" rel="noopener">wooyun-2014-085124</a></li>
+<li><a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2012-04728" target="_blank" rel="noopener">wooyun-2012-04728</a> 返回包里直接有密保问题的答案</li>
+</ul>
+<p>验证码未绑定用户或手机：</p>
+<ul>
+<li>只要验证码对就行，获得验证码后，拦一下数据包改成别人的，改的也是别人的，不是一开始输入的那个 ；</li>
+<li>有的时候会有一个加密的参数认证，这个时候推出加密算法是不现实的，只需要提前走一边流程，把要修改密码账户的加密值拿到就行；</li>
+<li>还有一种情况，手机和验证码绑定，但是用户没和手机绑定。通过数据包改成其他用户的手机或者其他方式改掉用户名就可以</li>
+<li>绕过本地验证：发送到服务器验证后，把结果返回给浏览器，改一下返回包可以欺骗客户端 <a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2016-0216112" target="_blank" rel="noopener">wooyun-2016-0216112</a></li>
+</ul>
+<p>跳过验证步骤：逻辑漏洞。情况就很多了</p>
+<ul>
+<li>提前走一边流程记下每个步骤的网址，然后到输入验证码后直接进入输入新密码的界面。<a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2016-0225958" target="_blank" rel="noopener">wooyun-2016-0225958</a></li>
+<li>比如说他会发送用户一个邮件，结果邮件里的网址get过去的参数是可以改的，这时候提前知道url后输入任意用户名即可重置此用户的密码<a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2016-0207468" target="_blank" rel="noopener">wooyun-2016-0207468</a></li>
+</ul>
+<p>未校验用户字段的值：最后一步把新密码传到服务器的数据包中用户名或者手机号被修改后直接成功修改该用户的密码，后台没有做校验</p>
+<p>修改密码处id/用户名可替换：还是没有做校验</p>
+<p>cookie值的替换：虽然没有直接把除了密码以外的信息直接post上去，是用的cookie判断的身份。但其实换别人cookie就重置了此人的密码，只要再走一遍流程获得其他用户的cookie并替换到最后一步得住举报中即可</p>
+<ul>
+<li><a href="http://www.loner.fm/bugs/bug_detail.php?wybug_id=wooyun-2014-085843" target="_blank" rel="noopener">wooyun-2014-085843</a></li>
+</ul>
+<p>修改隐藏字段：字面意思 ，比如说loginid之类的字段</p>
+<p>修复手段还在学习整理中，目前最通用的办法：简单来说在获取当前登录用户的时候，对该用户的身份进行确认，以及安全验证该用户是否存在操作的权限，在请求中加以token随机值在服务器端对每一次的请求进行token效验。</p>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-09-11T10:02:47.000Z" itemprop="datePublished">
+              2018-09-11
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/web/">web</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/逻辑漏洞/">逻辑漏洞</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/密码找回/">密码找回</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  
+</div>
+
+            <footer>
+    <div>© 2018 - XUPTSEC </div>
+    <div>
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a>
+        </span>
+        ,
+        <span>
+            Theme - <a href="https://github.com/nameoverflow/hexo-theme-icalm">Icalm</a>
+        </span>
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

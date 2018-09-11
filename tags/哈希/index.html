@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>XUPTSEC&#39;s blog</title>
+  
+    <link rel="icon" href="/assets/favicon.png">
+  
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/favicon.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>XUPTSEC&#39;s blog</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/xuptsec-admin">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <ul class="Index">
+  
+    <header class='PageTitle'>
+        <h1>{ 哈希 }</h1>
+    </header>
+  
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2018/09/11/哈希扩展长度攻击/">哈希扩展长度攻击</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2018-09-11T10:10:22.000Z" itemprop="datePublished">
+    2018-09-11
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/加密/">加密</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/哈希/">哈希</a> }
+  </li>
+
+
+  </ul>
+  
+  
+</div>
+
+    </header>
+    <div>
+      
+        <h1 id="哈希扩展长度攻击"><a href="#哈希扩展长度攻击" class="headerlink" title="哈希扩展长度攻击"></a>哈希扩展长度攻击</h1><h2 id="0x00-起于一道CTF"><a href="#0x00-起于一道CTF" class="headerlink" title="0x00 起于一道CTF"></a><strong>0x00 起于一道CTF</strong></h2><p>这是一道好题！学了一种新的攻击方法，顺带知道了hash的实现。只不过现在这种攻击方法也只活在ctf中了</p>
+<p>首先是改包能够看到源码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">flag = “XXXXXXXXXXXXXXXXXXXXXXX”;</span><br><span class="line"></span><br><span class="line">$secret = “XXXXXXXXXXXXXXX”; <span class="comment">// This secret is 15 characters long for security!</span></span><br><span class="line"></span><br><span class="line">$username = $_POST[“username”];</span><br><span class="line"></span><br><span class="line">$password = $_POST[“password”];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">empty</span>($_COOKIE[“getmein”])) &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (urldecode($username) === “admin” &amp;&amp; urldecode($password) != “admin”) &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($COOKIE[“getmein”] === md5($secret . urldecode($username . $password))) &#123;<span class="keyword">echo</span> “Congratulations! You are a registered user.\n”;</span><br><span class="line"></span><br><span class="line"><span class="keyword">die</span> (“The flag is “. $flag);&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">die</span> (“Your cookies don’t match up! STOP HACKING THIS SITE.”);</span><br><span class="line"></span><br><span class="line">&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">die</span> (“You are not an admin! LEAVE.”);&#125;&#125;</span><br><span class="line"></span><br><span class="line">setcookie(“sample-hash”, md5($secret . urldecode(“admin” . “admin”)), time() + (<span class="number">60</span> * <span class="number">60</span> * <span class="number">24</span> * <span class="number">7</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">empty</span>($_COOKIE[“source”])) &#123;</span><br><span class="line"></span><br><span class="line">setcookie(“source”, <span class="number">0</span>, time() + (<span class="number">60</span> * <span class="number">60</span> * <span class="number">24</span> * <span class="number">7</span>));&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($_COOKIE[“source”] != <span class="number">0</span>) &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> “”; <span class="comment">// This source code is outputted here&#125;&#125;</span></span><br></pre></td></tr></table></figure>
+<p>要显示出flag就得要通过这个逻辑：<code>$COOKIE[“getmein”] === md5($secret . urldecode($username . $password)</code></p>
+<p>问题在于不知道secret的值是多少，爆破几乎是不可能的，这里就要用到哈希扩展长度攻击</p>
+<h2 id="0x01什么是哈希扩展长度攻击"><a href="#0x01什么是哈希扩展长度攻击" class="headerlink" title="0x01什么是哈希扩展长度攻击"></a><strong>0x01什么是哈希扩展长度攻击</strong></h2><p>已知：salt的MD5值，但是不知道str1本身的值</p>
+<p>我们可以知道salt+padding+任意字符   的md5值</p>
+<p>因为md5的实现中64轮变换每次都是用的上次变换的结果，通过md5可以反向算出最后一次变换的四个值，之后加入到变换函数中，在后面添加任意数据。这样在不知道salt本身值的情况下也能算出salt+padding+任意数据的md5值了</p>
+<p>我们需要知道md5的实现过程才能理解这种攻击方式</p>
+<h3 id="hash的实现"><a href="#hash的实现" class="headerlink" title="hash的实现"></a><strong>hash的实现</strong></h3><p>首先对消息进行分组，每组64个字节，不足64个字节的部分用padding补齐，其中，第一个补充的字节是0x80，之后的都是0x00，padding的最后8个字节用来表示需要哈希的消息长度</p>
+<p>defpadding(self,n,sz=None):</p>
+<p>ifszisNone:</p>
+<p>sz=n</p>
+<p>pre=64–8</p>
+<p>sz=struct.pack(“Q”,sz*8)</p>
+<p>pad=‘\x80‘</p>
+<p>n+=1</p>
+<p>ifn%64&lt;=pre:</p>
+<p>pad+=‘\x00‘*(pre–n%64)</p>
+<p>pad+=sz</p>
+<p>else:</p>
+<p>pad+=‘\x00‘*(pre+64–n%64)</p>
+<p>pad+=sz</p>
+<p>returnpad</p>
+<p>#最后八个字节为数据长度</p>
+<p>defpad(self,msg):</p>
+<p>returnmsg+self.padding(len(msg))</p>
+<p>。</p>
+<p>之后开始对每组消息进行压缩，经过64轮的数学变换（位运算的与或非异或、按位左移右移、按位无符号左移右移、进制转换、sin、和0xFF、0xFFFFFFF做与运算保证位数不变等等）每一次变换压缩的结果被当成下一轮变换压缩的初始值。最开始的初始值是由文档规定好的。最后的结果拼在一起就是128位的md5值</p>
+<p>四个定义好的变换函数：</p>
+<p>F(X,Y,Z) =(X&amp;Y)|((~X)&amp;Z)</p>
+<p>G(X,Y,Z) =(X&amp;Z)|(Y&amp;(~Z))</p>
+<p>H(X,Y,Z) =X^Y^Z</p>
+<p>I(X,Y,Z)=Y^(X|(~Z))</p>
+<p>（&amp;是与，|是或，~是非，^是异或）</p>
+<p>四个定义好的初始值：</p>
+<p>A=0x01234567，B=0x89abcdef，C=0xfedcba98，D=0x76543210。</p>
+<p>变换函数</p>
+<p>defXX(func,a,b,c,d,x,s,ac):</p>
+<p>res=0L</p>
+<p>res=res+a+func(b,c,d)</p>
+<p>res=res+x</p>
+<p>res=res+ac</p>
+<p>res=res&amp;0xffffffffL</p>
+<p>res=_rotateLeft(res,s)</p>
+<p>res=res&amp;0xffffffffL</p>
+<p>res=res+b</p>
+<p>returnres&amp;0xffffffffL</p>
+<p>defmd5_compress(self,buf):</p>
+<p>iflen(buf)!=64:</p>
+<p>raiseValueError,“Invalidbufferoflength%d:%s”%(len(buf),repr(buf))</p>
+<p>inp=struct.unpack(“I”*16,buf)</p>
+<p>a,b,c,d=self.A,self.B,self.C,self.D</p>
+<p>#开始进行64轮数学变换,四大轮，每轮16次</p>
+<p>#Round1.</p>
+<p>S11,S12,S13,S14=7,12,17,22</p>
+<p>a=XX(F,a,b,c,d,inp[0],S11,0xD76AA478L)#1</p>
+<p>d=XX(F,d,a,b,c,inp[1],S12,0xE8C7B756L)#2</p>
+<p>c=XX(F,c,d,a,b,inp[2],S13,0x242070DBL)#3</p>
+<p>b=XX(F,b,c,d,a,inp[3],S14,0xC1BDCEEEL)#4</p>
+<p>a=XX(F,a,b,c,d,inp[4],S11,0xF57C0FAFL)#5</p>
+<p>d=XX(F,d,a,b,c,inp[5],S12,0x4787C62AL)#6</p>
+<p>c=XX(F,c,d,a,b,inp[6],S13,0xA8304613L)#7</p>
+<p>b=XX(F,b,c,d,a,inp[7],S14,0xFD469501L)#8</p>
+<p>a=XX(F,a,b,c,d,inp[8],S11,0x698098D8L)#9</p>
+<p>d=XX(F,d,a,b,c,inp[9],S12,0x8B44F7AFL)#10</p>
+<p>c=XX(F,c,d,a,b,inp[10],S13,0xFFFF5BB1L)#11</p>
+<p>b=XX(F,b,c,d,a,inp[11],S14,0x895CD7BEL)#12</p>
+<p>a=XX(F,a,b,c,d,inp[12],S11,0x6B901122L)#13</p>
+<p>d=XX(F,d,a,b,c,inp[13],S12,0xFD987193L)#14</p>
+<p>c=XX(F,c,d,a,b,inp[14],S13,0xA679438EL)#15</p>
+<p>b=XX(F,b,c,d,a,inp[15],S14,0x49B40821L)#16</p>
+<p>#Round2.</p>
+<p>S21,S22,S23,S24=5,9,14,20</p>
+<p>a=XX(G,a,b,c,d,inp[1],S21,0xF61E2562L)#17</p>
+<p>d=XX(G,d,a,b,c,inp[6],S22,0xC040B340L)#18</p>
+<p>c=XX(G,c,d,a,b,inp[11],S23,0x265E5A51L)#19</p>
+<p>b=XX(G,b,c,d,a,inp[0],S24,0xE9B6C7AAL)#20</p>
+<p>a=XX(G,a,b,c,d,inp[5],S21,0xD62F105DL)#21</p>
+<p>d=XX(G,d,a,b,c,inp[10],S22,0x02441453L)#22</p>
+<p>c=XX(G,c,d,a,b,inp[15],S23,0xD8A1E681L)#23</p>
+<p>b=XX(G,b,c,d,a,inp[4],S24,0xE7D3FBC8L)#24</p>
+<p>a=XX(G,a,b,c,d,inp[9],S21,0x21E1CDE6L)#25</p>
+<p>d=XX(G,d,a,b,c,inp[14],S22,0xC33707D6L)#26</p>
+<p>c=XX(G,c,d,a,b,inp[3],S23,0xF4D50D87L)#27</p>
+<p>b=XX(G,b,c,d,a,inp[8],S24,0x455A14EDL)#28</p>
+<p>a=XX(G,a,b,c,d,inp[13],S21,0xA9E3E905L)#29</p>
+<p>d=XX(G,d,a,b,c,inp[2],S22,0xFCEFA3F8L)#30</p>
+<p>c=XX(G,c,d,a,b,inp[7],S23,0x676F02D9L)#31</p>
+<p>b=XX(G,b,c,d,a,inp[12],S24,0x8D2A4C8AL)#32</p>
+<p>#Round3.</p>
+<p>S31,S32,S33,S34=4,11,16,23</p>
+<p>a=XX(H,a,b,c,d,inp[5],S31,0xFFFA3942L)#33</p>
+<p>d=XX(H,d,a,b,c,inp[8],S32,0x8771F681L)#34</p>
+<p>c=XX(H,c,d,a,b,inp[11],S33,0x6D9D6122L)#35</p>
+<p>b=XX(H,b,c,d,a,inp[14],S34,0xFDE5380CL)#36</p>
+<p>a=XX(H,a,b,c,d,inp[1],S31,0xA4BEEA44L)#37</p>
+<p>d=XX(H,d,a,b,c,inp[4],S32,0x4BDECFA9L)#38</p>
+<p>c=XX(H,c,d,a,b,inp[7],S33,0xF6BB4B60L)#39</p>
+<p>b=XX(H,b,c,d,a,inp[10],S34,0xBEBFBC70L)#40</p>
+<p>a=XX(H,a,b,c,d,inp[13],S31,0x289B7EC6L)#41</p>
+<p>d=XX(H,d,a,b,c,inp[0],S32,0xEAA127FAL)#42</p>
+<p>c=XX(H,c,d,a,b,inp[3],S33,0xD4EF3085L)#43</p>
+<p>b=XX(H,b,c,d,a,inp[6],S34,0x04881D05L)#44</p>
+<p>a=XX(H,a,b,c,d,inp[9],S31,0xD9D4D039L)#45</p>
+<p>d=XX(H,d,a,b,c,inp[12],S32,0xE6DB99E5L)#46</p>
+<p>c=XX(H,c,d,a,b,inp[15],S33,0x1FA27CF8L)#47</p>
+<p>b=XX(H,b,c,d,a,inp[2],S34,0xC4AC5665L)#48</p>
+<p>#Round4.</p>
+<p>S41,S42,S43,S44=6,10,15,21</p>
+<p>a=XX(I,a,b,c,d,inp[0],S41,0xF4292244L)#49</p>
+<p>d=XX(I,d,a,b,c,inp[7],S42,0x432AFF97L)#50</p>
+<p>c=XX(I,c,d,a,b,inp[14],S43,0xAB9423A7L)#51</p>
+<p>b=XX(I,b,c,d,a,inp[5],S44,0xFC93A039L)#52</p>
+<p>a=XX(I,a,b,c,d,inp[12],S41,0x655B59C3L)#53</p>
+<p>d=XX(I,d,a,b,c,inp[3],S42,0x8F0CCC92L)#54</p>
+<p>c=XX(I,c,d,a,b,inp[10],S43,0xFFEFF47DL)#55</p>
+<p>b=XX(I,b,c,d,a,inp[1],S44,0x85845DD1L)#56</p>
+<p>a=XX(I,a,b,c,d,inp[8],S41,0x6FA87E4FL)#57</p>
+<p>d=XX(I,d,a,b,c,inp[15],S42,0xFE2CE6E0L)#58</p>
+<p>c=XX(I,c,d,a,b,inp[6],S43,0xA3014314L)#59</p>
+<p>b=XX(I,b,c,d,a,inp[13],S44,0x4E0811A1L)#60</p>
+<p>a=XX(I,a,b,c,d,inp[4],S41,0xF7537E82L)#61</p>
+<p>d=XX(I,d,a,b,c,inp[11],S42,0xBD3AF235L)#62</p>
+<p>c=XX(I,c,d,a,b,inp[2],S43,0x2AD7D2BBL)#63</p>
+<p>b=XX(I,b,c,d,a,inp[9],S44,0xEB86D391L)#64</p>
+<p>self.A=(self.A+a)&amp;0xffffffffL</p>
+<p>self.B=(self.B+b)&amp;0xffffffffL</p>
+<p>self.C=(self.C+c)&amp;0xffffffffL</p>
+<p>self.D=(self.D+d)&amp;0xffffffffL</p>
+<h2 id="0x02回到题目"><a href="#0x02回到题目" class="headerlink" title="0x02回到题目"></a><strong>0x02回到题目</strong></h2><p>这个时候我们通过脚本构造payload，padding的值得是64位</p>
+<p>脚本如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="comment">#这是个哈希扩展攻击的payload生成脚本</span></span><br><span class="line"><span class="comment">#python 本文件名字.py salt的md5 附加的值 salt的长度</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line"><span class="comment">#每轮中用到的数学变换函数。L为循环左移，</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">F</span><span class="params">(x, y, z)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (x &amp; y) | ((~x) &amp; z)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">G</span><span class="params">(x, y, z)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (x &amp; z) | (y &amp; (~z))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">H</span><span class="params">(x, y, z)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x ^ y ^ z</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">I</span><span class="params">(x, y, z)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> y ^ (x | (~z))</span><br><span class="line"></span><br><span class="line"><span class="comment">#注意左移之后可能会超过32位，所以要和0xffffffff做与运算，确保结果为32位。</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_rotateLeft</span><span class="params">(x, n)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (x &lt;&lt; n) | (x &gt;&gt; (<span class="number">32</span> - n))</span><br><span class="line"><span class="comment">#变换函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">XX</span><span class="params">(func, a, b, c, d, x, s, ac)</span>:</span></span><br><span class="line">    res = <span class="number">0L</span></span><br><span class="line">    res = res + a + func(b, c, d)</span><br><span class="line">    res = res + x</span><br><span class="line">    res = res + ac</span><br><span class="line">    res = res &amp; <span class="number">0xffffffffL</span></span><br><span class="line">    res = _rotateLeft(res, s)</span><br><span class="line">    res = res &amp; <span class="number">0xffffffffL</span></span><br><span class="line">    res = res + b</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> res &amp; <span class="number">0xffffffffL</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 主类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">md5</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment">#初始化向量，这是标准里定死的</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.A, self.B, self.C, self.D = (<span class="number">0x67452301L</span>, <span class="number">0xefcdab89L</span>, <span class="number">0x98badcfeL</span>, <span class="number">0x10325476L</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">md5_compress</span><span class="params">(self, buf)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> len(buf) != <span class="number">64</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError, <span class="string">"Invalid buffer of length %d: %s"</span> % (len(buf), repr(buf))</span><br><span class="line">        inp = struct.unpack(<span class="string">"I"</span> * <span class="number">16</span>, buf)</span><br><span class="line">        a, b, c, d = self.A, self.B, self.C, self.D</span><br><span class="line"></span><br><span class="line">        <span class="comment">#开始进行64轮数学变换,四大轮，每轮16次</span></span><br><span class="line">        <span class="comment"># Round 1.</span></span><br><span class="line">        S11, S12, S13, S14 = <span class="number">7</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">22</span></span><br><span class="line"></span><br><span class="line">        a = XX(F, a, b, c, d, inp[<span class="number">0</span>], S11, <span class="number">0xD76AA478L</span>)  <span class="comment"># 1</span></span><br><span class="line">        d = XX(F, d, a, b, c, inp[<span class="number">1</span>], S12, <span class="number">0xE8C7B756L</span>)  <span class="comment"># 2</span></span><br><span class="line">        c = XX(F, c, d, a, b, inp[<span class="number">2</span>], S13, <span class="number">0x242070DBL</span>)  <span class="comment"># 3</span></span><br><span class="line">        b = XX(F, b, c, d, a, inp[<span class="number">3</span>], S14, <span class="number">0xC1BDCEEEL</span>)  <span class="comment"># 4</span></span><br><span class="line">        a = XX(F, a, b, c, d, inp[<span class="number">4</span>], S11, <span class="number">0xF57C0FAFL</span>)  <span class="comment"># 5</span></span><br><span class="line">        d = XX(F, d, a, b, c, inp[<span class="number">5</span>], S12, <span class="number">0x4787C62AL</span>)  <span class="comment"># 6</span></span><br><span class="line">        c = XX(F, c, d, a, b, inp[<span class="number">6</span>], S13, <span class="number">0xA8304613L</span>)  <span class="comment"># 7</span></span><br><span class="line">        b = XX(F, b, c, d, a, inp[<span class="number">7</span>], S14, <span class="number">0xFD469501L</span>)  <span class="comment"># 8</span></span><br><span class="line">        a = XX(F, a, b, c, d, inp[<span class="number">8</span>], S11, <span class="number">0x698098D8L</span>)  <span class="comment"># 9</span></span><br><span class="line">        d = XX(F, d, a, b, c, inp[<span class="number">9</span>], S12, <span class="number">0x8B44F7AFL</span>)  <span class="comment"># 10</span></span><br><span class="line">        c = XX(F, c, d, a, b, inp[<span class="number">10</span>], S13, <span class="number">0xFFFF5BB1L</span>)  <span class="comment"># 11</span></span><br><span class="line">        b = XX(F, b, c, d, a, inp[<span class="number">11</span>], S14, <span class="number">0x895CD7BEL</span>)  <span class="comment"># 12</span></span><br><span class="line">        a = XX(F, a, b, c, d, inp[<span class="number">12</span>], S11, <span class="number">0x6B901122L</span>)  <span class="comment"># 13</span></span><br><span class="line">        d = XX(F, d, a, b, c, inp[<span class="number">13</span>], S12, <span class="number">0xFD987193L</span>)  <span class="comment"># 14</span></span><br><span class="line">        c = XX(F, c, d, a, b, inp[<span class="number">14</span>], S13, <span class="number">0xA679438EL</span>)  <span class="comment"># 15</span></span><br><span class="line">        b = XX(F, b, c, d, a, inp[<span class="number">15</span>], S14, <span class="number">0x49B40821L</span>)  <span class="comment"># 16</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Round 2.</span></span><br><span class="line">        S21, S22, S23, S24 = <span class="number">5</span>, <span class="number">9</span>, <span class="number">14</span>, <span class="number">20</span></span><br><span class="line"></span><br><span class="line">        a = XX(G, a, b, c, d, inp[<span class="number">1</span>], S21, <span class="number">0xF61E2562L</span>)  <span class="comment"># 17</span></span><br><span class="line">        d = XX(G, d, a, b, c, inp[<span class="number">6</span>], S22, <span class="number">0xC040B340L</span>)  <span class="comment"># 18</span></span><br><span class="line">        c = XX(G, c, d, a, b, inp[<span class="number">11</span>], S23, <span class="number">0x265E5A51L</span>)  <span class="comment"># 19</span></span><br><span class="line">        b = XX(G, b, c, d, a, inp[<span class="number">0</span>], S24, <span class="number">0xE9B6C7AAL</span>)  <span class="comment"># 20</span></span><br><span class="line">        a = XX(G, a, b, c, d, inp[<span class="number">5</span>], S21, <span class="number">0xD62F105DL</span>)  <span class="comment"># 21</span></span><br><span class="line">        d = XX(G, d, a, b, c, inp[<span class="number">10</span>], S22, <span class="number">0x02441453L</span>)  <span class="comment"># 22</span></span><br><span class="line">        c = XX(G, c, d, a, b, inp[<span class="number">15</span>], S23, <span class="number">0xD8A1E681L</span>)  <span class="comment"># 23</span></span><br><span class="line">        b = XX(G, b, c, d, a, inp[<span class="number">4</span>], S24, <span class="number">0xE7D3FBC8L</span>)  <span class="comment"># 24</span></span><br><span class="line">        a = XX(G, a, b, c, d, inp[<span class="number">9</span>], S21, <span class="number">0x21E1CDE6L</span>)  <span class="comment"># 25</span></span><br><span class="line">        d = XX(G, d, a, b, c, inp[<span class="number">14</span>], S22, <span class="number">0xC33707D6L</span>)  <span class="comment"># 26</span></span><br><span class="line">        c = XX(G, c, d, a, b, inp[<span class="number">3</span>], S23, <span class="number">0xF4D50D87L</span>)  <span class="comment"># 27</span></span><br><span class="line">        b = XX(G, b, c, d, a, inp[<span class="number">8</span>], S24, <span class="number">0x455A14EDL</span>)  <span class="comment"># 28</span></span><br><span class="line">        a = XX(G, a, b, c, d, inp[<span class="number">13</span>], S21, <span class="number">0xA9E3E905L</span>)  <span class="comment"># 29</span></span><br><span class="line">        d = XX(G, d, a, b, c, inp[<span class="number">2</span>], S22, <span class="number">0xFCEFA3F8L</span>)  <span class="comment"># 30</span></span><br><span class="line">        c = XX(G, c, d, a, b, inp[<span class="number">7</span>], S23, <span class="number">0x676F02D9L</span>)  <span class="comment"># 31</span></span><br><span class="line">        b = XX(G, b, c, d, a, inp[<span class="number">12</span>], S24, <span class="number">0x8D2A4C8AL</span>)  <span class="comment"># 32</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Round 3.</span></span><br><span class="line">        S31, S32, S33, S34 = <span class="number">4</span>, <span class="number">11</span>, <span class="number">16</span>, <span class="number">23</span></span><br><span class="line"></span><br><span class="line">        a = XX(H, a, b, c, d, inp[<span class="number">5</span>], S31, <span class="number">0xFFFA3942L</span>)  <span class="comment"># 33</span></span><br><span class="line">        d = XX(H, d, a, b, c, inp[<span class="number">8</span>], S32, <span class="number">0x8771F681L</span>)  <span class="comment"># 34</span></span><br><span class="line">        c = XX(H, c, d, a, b, inp[<span class="number">11</span>], S33, <span class="number">0x6D9D6122L</span>)  <span class="comment"># 35</span></span><br><span class="line">        b = XX(H, b, c, d, a, inp[<span class="number">14</span>], S34, <span class="number">0xFDE5380CL</span>)  <span class="comment"># 36</span></span><br><span class="line">        a = XX(H, a, b, c, d, inp[<span class="number">1</span>], S31, <span class="number">0xA4BEEA44L</span>)  <span class="comment"># 37</span></span><br><span class="line">        d = XX(H, d, a, b, c, inp[<span class="number">4</span>], S32, <span class="number">0x4BDECFA9L</span>)  <span class="comment"># 38</span></span><br><span class="line">        c = XX(H, c, d, a, b, inp[<span class="number">7</span>], S33, <span class="number">0xF6BB4B60L</span>)  <span class="comment"># 39</span></span><br><span class="line">        b = XX(H, b, c, d, a, inp[<span class="number">10</span>], S34, <span class="number">0xBEBFBC70L</span>)  <span class="comment"># 40</span></span><br><span class="line">        a = XX(H, a, b, c, d, inp[<span class="number">13</span>], S31, <span class="number">0x289B7EC6L</span>)  <span class="comment"># 41</span></span><br><span class="line">        d = XX(H, d, a, b, c, inp[<span class="number">0</span>], S32, <span class="number">0xEAA127FAL</span>)  <span class="comment"># 42</span></span><br><span class="line">        c = XX(H, c, d, a, b, inp[<span class="number">3</span>], S33, <span class="number">0xD4EF3085L</span>)  <span class="comment"># 43</span></span><br><span class="line">        b = XX(H, b, c, d, a, inp[<span class="number">6</span>], S34, <span class="number">0x04881D05L</span>)  <span class="comment"># 44</span></span><br><span class="line">        a = XX(H, a, b, c, d, inp[<span class="number">9</span>], S31, <span class="number">0xD9D4D039L</span>)  <span class="comment"># 45</span></span><br><span class="line">        d = XX(H, d, a, b, c, inp[<span class="number">12</span>], S32, <span class="number">0xE6DB99E5L</span>)  <span class="comment"># 46</span></span><br><span class="line">        c = XX(H, c, d, a, b, inp[<span class="number">15</span>], S33, <span class="number">0x1FA27CF8L</span>)  <span class="comment"># 47</span></span><br><span class="line">        b = XX(H, b, c, d, a, inp[<span class="number">2</span>], S34, <span class="number">0xC4AC5665L</span>)  <span class="comment"># 48</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Round 4.</span></span><br><span class="line">        S41, S42, S43, S44 = <span class="number">6</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">21</span></span><br><span class="line"></span><br><span class="line">        a = XX(I, a, b, c, d, inp[<span class="number">0</span>], S41, <span class="number">0xF4292244L</span>)  <span class="comment"># 49</span></span><br><span class="line">        d = XX(I, d, a, b, c, inp[<span class="number">7</span>], S42, <span class="number">0x432AFF97L</span>)  <span class="comment"># 50</span></span><br><span class="line">        c = XX(I, c, d, a, b, inp[<span class="number">14</span>], S43, <span class="number">0xAB9423A7L</span>)  <span class="comment"># 51</span></span><br><span class="line">        b = XX(I, b, c, d, a, inp[<span class="number">5</span>], S44, <span class="number">0xFC93A039L</span>)  <span class="comment"># 52</span></span><br><span class="line">        a = XX(I, a, b, c, d, inp[<span class="number">12</span>], S41, <span class="number">0x655B59C3L</span>)  <span class="comment"># 53</span></span><br><span class="line">        d = XX(I, d, a, b, c, inp[<span class="number">3</span>], S42, <span class="number">0x8F0CCC92L</span>)  <span class="comment"># 54</span></span><br><span class="line">        c = XX(I, c, d, a, b, inp[<span class="number">10</span>], S43, <span class="number">0xFFEFF47DL</span>)  <span class="comment"># 55</span></span><br><span class="line">        b = XX(I, b, c, d, a, inp[<span class="number">1</span>], S44, <span class="number">0x85845DD1L</span>)  <span class="comment"># 56</span></span><br><span class="line">        a = XX(I, a, b, c, d, inp[<span class="number">8</span>], S41, <span class="number">0x6FA87E4FL</span>)  <span class="comment"># 57</span></span><br><span class="line">        d = XX(I, d, a, b, c, inp[<span class="number">15</span>], S42, <span class="number">0xFE2CE6E0L</span>)  <span class="comment"># 58</span></span><br><span class="line">        c = XX(I, c, d, a, b, inp[<span class="number">6</span>], S43, <span class="number">0xA3014314L</span>)  <span class="comment"># 59</span></span><br><span class="line">        b = XX(I, b, c, d, a, inp[<span class="number">13</span>], S44, <span class="number">0x4E0811A1L</span>)  <span class="comment"># 60</span></span><br><span class="line">        a = XX(I, a, b, c, d, inp[<span class="number">4</span>], S41, <span class="number">0xF7537E82L</span>)  <span class="comment"># 61</span></span><br><span class="line">        d = XX(I, d, a, b, c, inp[<span class="number">11</span>], S42, <span class="number">0xBD3AF235L</span>)  <span class="comment"># 62</span></span><br><span class="line">        c = XX(I, c, d, a, b, inp[<span class="number">2</span>], S43, <span class="number">0x2AD7D2BBL</span>)  <span class="comment"># 63</span></span><br><span class="line">        b = XX(I, b, c, d, a, inp[<span class="number">9</span>], S44, <span class="number">0xEB86D391L</span>)  <span class="comment"># 64</span></span><br><span class="line"></span><br><span class="line">        self.A = (self.A + a) &amp; <span class="number">0xffffffffL</span></span><br><span class="line">        self.B = (self.B + b) &amp; <span class="number">0xffffffffL</span></span><br><span class="line">        self.C = (self.C + c) &amp; <span class="number">0xffffffffL</span></span><br><span class="line">        self.D = (self.D + d) &amp; <span class="number">0xffffffffL</span></span><br><span class="line">        <span class="comment"># print 'A=%s\nB=%s\nC=%s\nD=%s\n' % (hex(self.A), hex(self.B), hex(self.C), hex(self.D))</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#padding，即补位:首字节为\x80</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">padding</span><span class="params">(self, n, sz = None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> sz <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">            sz = n</span><br><span class="line">        pre = <span class="number">64</span> - <span class="number">8</span></span><br><span class="line">        sz = struct.pack(<span class="string">"Q"</span>, sz * <span class="number">8</span>)</span><br><span class="line">        pad = <span class="string">'\x80'</span></span><br><span class="line">        n += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> n % <span class="number">64</span> &lt;= pre:</span><br><span class="line">            pad += <span class="string">'\x00'</span> * (pre - n % <span class="number">64</span>)</span><br><span class="line">            pad += sz</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            pad += <span class="string">'\x00'</span> * (pre + <span class="number">64</span> - n % <span class="number">64</span>)</span><br><span class="line">            pad += sz</span><br><span class="line">        <span class="keyword">return</span> pad</span><br><span class="line">    <span class="comment">#最后八个字节为数据长度</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pad</span><span class="params">(self, msg)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> msg + self.padding(len(msg))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">md5_iter</span><span class="params">(self, padding_msg)</span>:</span></span><br><span class="line">        <span class="keyword">assert</span> len(padding_msg) % <span class="number">64</span> == <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(padding_msg), <span class="number">64</span>):</span><br><span class="line">            block = padding_msg[i:i + <span class="number">64</span>]</span><br><span class="line">            self.md5_compress(padding_msg[i:i + <span class="number">64</span>])</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">digest</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> struct.pack(<span class="string">'&lt;IIII'</span>, self.A, self.B, self.C, self.D)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">hexdigest</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> binascii.hexlify(self.digest()).decode()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">my_md5</span><span class="params">(self, msg)</span>:</span></span><br><span class="line">        padding_msg = self.pad(msg)</span><br><span class="line">        self.md5_iter(padding_msg)</span><br><span class="line">        <span class="keyword">return</span> self.hexdigest()  <span class="comment"># 通过md5值，逆向算出最后一轮的magic number</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compute_magic_number</span><span class="params">(self, md5str)</span>:</span></span><br><span class="line">        self.A = struct.unpack(<span class="string">"I"</span>, md5str[<span class="number">0</span>:<span class="number">8</span>].decode(<span class="string">'hex'</span>))[<span class="number">0</span>]</span><br><span class="line">        self.B = struct.unpack(<span class="string">"I"</span>, md5str[<span class="number">8</span>:<span class="number">16</span>].decode(<span class="string">'hex'</span>))[<span class="number">0</span>]</span><br><span class="line">        self.C = struct.unpack(<span class="string">"I"</span>, md5str[<span class="number">16</span>:<span class="number">24</span>].decode(<span class="string">'hex'</span>))[<span class="number">0</span>]</span><br><span class="line">        self.D = struct.unpack(<span class="string">"I"</span>, md5str[<span class="number">24</span>:<span class="number">32</span>].decode(<span class="string">'hex'</span>))[<span class="number">0</span>]</span><br><span class="line">        <span class="comment"># print '\nA=%s\nB=%s\nC=%s\nD=%s\n' % (hex(self.A), hex(self.B), hex(self.C), hex(self.D))</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">extension_attack</span><span class="params">(self, md5str, str_append, lenth)</span>:</span></span><br><span class="line">        self.compute_magic_number(md5str)</span><br><span class="line">        p = self.padding(lenth)</span><br><span class="line">        padding_msg = self.padding( len(str_append), lenth + len(p) + len(str_append) )</span><br><span class="line">        <span class="comment"># url = repr(padding_msg.replace(' ', ''))</span></span><br><span class="line">        <span class="comment"># print 'padding:%r' % (padding_msg)</span></span><br><span class="line">        self.md5_iter(str_append + padding_msg)</span><br><span class="line">        <span class="keyword">return</span> self.hexdigest()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    m = md5()</span><br><span class="line">    <span class="keyword">if</span> <span class="number">1</span>:</span><br><span class="line">        lenth = int(raw_input(<span class="string">u'salt的hash长度：'</span>))</span><br><span class="line">        md5 = raw_input(<span class="string">u'salt的hash值：'</span>)</span><br><span class="line">        value = raw_input(<span class="string">u'附加值：'</span>)</span><br><span class="line">        <span class="keyword">print</span> <span class="string">u'md5(salt + padding + 附加值):'</span> + m.extension_attack(md5, value, lenth)</span><br><span class="line">        <span class="comment">#这个是padding的值，得看情况，实在不行就手动算。salt长度 + padding = 64</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">ur'padding+附加值:'</span> + <span class="string">r'%08'</span> + <span class="string">r'%00'</span> * (<span class="number">64</span> - <span class="number">1</span> - lenth - <span class="number">8</span>) + <span class="string">r'%'</span> + str(hex(lenth * <span class="number">8</span>)).replace(<span class="string">r'0x'</span>,<span class="string">''</span>) + <span class="string">r'%00'</span> * <span class="number">7</span> + value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">print</span> m.my_md5(<span class="string">"123456"</span>)</span><br><span class="line">        src = m.pad(sys.argv[<span class="number">1</span>]) + sys.argv[<span class="number">2</span>]</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'md5 padding -&gt;'</span>, m.my_md5(src)</span><br><span class="line">还有一个python扩展hashpumpy，但是我折腾好一阵都安装不上，那个更好用，自己写也是无奈之举</span><br></pre></td></tr></table></figure>
+<p>根据源代码，username必须是admin，这样的话password必须是admin+padding+附加值</p>
+<p>这样的话post上去的就是</p>
+<p>username=admin&amp;password=admin%80%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%c8%00%00%00%00%00%00%00asd</p>
+<p>在数据包里设置cookies:getmein=bf3b234ff0410ee4ec09b470e314d8c9</p>
+<p>就成功绕过验证了</p>
+<p>这里面直接给出的salt的MD5值其实是secret+adminadmin的MD5，所以salt的长度得是25，最后补位的时候要注意，实在不行自己手动构造padding。但是salt+padding+附加值的MD5没问题</p>
+<h2 id="0x03后记"><a href="#0x03后记" class="headerlink" title="0x03后记"></a><strong>0x03后记</strong></h2><p>中途也是踩了好多坑</p>
+<p>首先是MD5的实现过程和漏洞原理，看了好一阵才明白，还好</p>
+<p>之后就是脚本的实现，hashpumpy到最后都没装上，只能自己写。MD5的python实现是从网上找的，也花了不少时间改。</p>
+<p>最后是payload的问题，忘了题目给的MD5是secret+adminadmin的md5，结果脚本跑的是secret本身，和它的不一致，有歧义。当时太晚了神志不太清醒还以为是脚本写错了，卡了好长时间，最后手动padding才知道不是自己的问题</p>
+
+      
+    </div>
+</article>
+
+    </li>
+  
+</ul>
+
+
+
+            <footer>
+    <div>© 2018 - XUPTSEC </div>
+    <div>
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a>
+        </span>
+        ,
+        <span>
+            Theme - <a href="https://github.com/nameoverflow/hexo-theme-icalm">Icalm</a>
+        </span>
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

